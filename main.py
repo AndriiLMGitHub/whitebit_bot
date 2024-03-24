@@ -16,7 +16,7 @@ MIN_SUM_BID_FIRST = 1000000
 MIN_SUM_BIDS_SECOND = 300000
 LIMIT = 5
 LEVEL = 5
-TIMEOUT = 15  # Enter timeouts in seconds
+TIMEOUT = 3  # Enter timeouts in seconds
 API_URL = f"{os.getenv('ROOT_API_URL')}/v4/public/orderbook/WBT_USDT?limit={LIMIT}&level={LEVEL}"
 
 
@@ -55,9 +55,10 @@ def check_value_bids_second(value):
         return False
 
 
-@bot.message_handler(commands=['start', ])
+@bot.message_handler(commands=['start', 'hello'])
 def welcome(message):
     bot.reply_to(message, f'Hello, {message.from_user.first_name}')
+    AMOUNT_REQUESTS = 0
     while True:
         try:
             response = requests.get(API_URL)
@@ -73,7 +74,8 @@ def welcome(message):
             if check_value_bids_second(handle_bids_second(bids)):
                 bot.send_message(chat_id=message.chat.id, text="Go trading! It is < than 300 000!")
 
-            print("Start requesting...")
+            AMOUNT_REQUESTS +=1
+            print(f"Request number - {AMOUNT_REQUESTS}")
 
         except Exception as e:
             print(f'Something wint wrong with {e}')
